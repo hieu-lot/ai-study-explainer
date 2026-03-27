@@ -1,0 +1,51 @@
+[
+  {
+    "test": "Vietnamese input",
+    "language_detected": "en",
+    "has_response": true,
+    "fields": [
+      "answer",
+      "summary",
+      "key_points",
+      "difficulty",
+      "source"
+    ],
+    "answer_preview": "(Dựa trên câu hỏi tiếng Anh)\n\nGiống như những nhà máy thực p"
+  },
+  {
+    "test": "English input",
+    "language_detected": "en",
+    "has_response": true,
+    "fields": [
+      "answer",
+      "summary",
+      "key_points",
+      "difficulty",
+      "source"
+    ],
+    "answer_preview": "(Dựa trên câu hỏi tiếng Anh)\n\nHọc máy liên quan đến việc tạo"
+  },
+  {
+    "test": "Language detection",
+    "detections": [
+      {
+        "text": "Xuan sang",
+        "detected": "en",
+        "expected": "vi",
+        "correct": false
+      },
+      {
+        "text": "Hello world",
+        "detected": "en",
+        "expected": "en",
+        "correct": true
+      },
+      {
+        "text": "Photosynthesis",
+        "detected": "en",
+        "expected": "en",
+        "correct": true
+      }
+    ]
+  }
+]
