@@ -1,135 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/db"; // Kiểm tra lại đường dẫn này có đúng trong project bạn không nhé
 
+// Giữ lại dòng này nếu bạn cần ép kiểu nodejs
 export const runtime = "nodejs";
 
-export async function GET(request: NextRequest) {
-    try {
-        const id = request.nextUrl.searchParams.get("id");
-        const username = request.nextUrl.searchParams.get("username");
-
-        if (id) {
-            const doc = await prisma.document.findUnique({
-                where: { id },
-                include: {
-                    _count: { select: { histories: true } },
-                },
-            });
-
-            if (!doc) {
-                return NextResponse.json({ success: false, error: "Document not found" }, { status: 404 });
-            }
-
-            if (username && doc.username !== username) {
-                return NextResponse.json({ success: false, error: "Document not found" }, { status: 404 });
-            }
-
-            return NextResponse.json({ success: true, documents: [doc] });
-        }
-
-        if (!username) {
-            return NextResponse.json({ success: true, documents: [] });
-        }
-
-        try {
-            const documents = await prisma.document.findMany({
-                where: { username },
-                orderBy: { createdAt: "desc" },
-                include: { _count: { select: { histories: true } } },
-            });
-
-            return NextResponse.json({ success: true, documents });
-        } catch (e) {
-            console.warn("Fallback filter", e);
-
-            const all = await prisma.document.findMany({
-                orderBy: { createdAt: "desc" },
-                include: { _count: { select: { histories: true } } },
-            });
-
-            const filtered = all.filter((d) => d.username === username);
-            return NextResponse.json({ success: true, documents: filtered });
-        }
-    } catch (error) {
-        console.error("Documents error:", error);
-        return NextResponse.json(
-            { success: false, error: "Failed to get documents" },
-            { status: 500 }
-        );
-    }
-}
-
+// Sau đó mới đến hàm export async function POST...
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
+        // Lấy dữ liệu và gán giá trị mặc định ngay từ đầu để tránh lỗi TypeScript
         let { id, name, content, username } = body;
 
+        // 1. Kiểm tra các trường bắt buộc
         if (!name) {
-            return NextResponse.json(
-                { success: false, error: "name required" },
-                { status: 400 }
-            );
-        }
-
-        // 🔥 FIX CHÍNH: auto fallback username
-        if (!username) {
-            username = "guest";
+            return NextResponse.json({ success: false, error: "name required" }, { status: 400 });
         }
 
         if (!content || !String(content).trim()) {
-            return NextResponse.json(
-                { success: false, error: "Document content is empty" },
-                { status: 400 }
-            );
+            return NextResponse.json({ success: false, error: "Document content is empty" }, { status: 400 });
         }
 
+        // 2. Đảm bảo username luôn có giá trị (tránh lỗi Required field trong DB)
+        const finalUsername = String(username || "guest");
+
+        // 3. Tạo ID nếu chưa có
         if (!id) {
-            try {
-                id = globalThis.crypto?.randomUUID?.() || `doc-${Date.now()}`;
-            } catch {
-                id = `doc-${Date.now()}`;
-            }
+            id = globalThis.crypto?.randomUUID?.() || `doc-${Date.now()}`;
         }
 
-        let document;
+        // 4. Thực hiện Upsert (Chỉ cần 1 lần duy nhất, không cần lặp lại trong catch)
+        const document = await prisma.document.upsert({
+            where: { id },
+            update: {
+                name,
+                content: content || "",
+                username: finalUsername, // Đảm bảo có username ở đây
+            },
+            create: {
+                id,
+                name,
+                content: content || "",
+                username: finalUsername, // Đảm bảo có username ở đây
+            },
+        });
 
-        try {
-            document = await prisma.document.upsert({
-                where: { id },
-                update: {
-                    name,
-                    content: content || "",
-                    username,
-                },
-                create: {
-                    id,
-                    name,
-                    content: content || "",
-                    username,
-                },
-            });
-        } catch (e) {
-            console.warn("Fallback no-username schema", e);
-
-            document = await prisma.document.upsert({
-                where: { id },
-                update: {
-                    name,
-                    content: content || "",
-                    username, // 👈 THÊM DÒNG NÀY
-                },
-                create: {
-                    id,
-                    name,
-                    content: content || "",
-                    username, // 👈 THÊM DÒNG NÀY
-                },
-            });
-        }
         return NextResponse.json({
             success: true,
             document,
         });
+
     } catch (error) {
         console.error("Document error:", error);
         return NextResponse.json(
