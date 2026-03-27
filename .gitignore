@@ -8,3 +8,5 @@ uploads/
 dist/
 build/
 prisma/*.db
+backend/temp_uploads/
+.next/
