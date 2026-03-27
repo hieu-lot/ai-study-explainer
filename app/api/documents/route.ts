@@ -116,11 +116,13 @@ export async function POST(request: NextRequest) {
                 update: {
                     name,
                     content: content || "",
+                    username,
                 },
                 create: {
                     id,
                     name,
                     content: content || "",
+                    username,
                 },
             });
         }
