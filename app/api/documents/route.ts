@@ -116,17 +116,16 @@ export async function POST(request: NextRequest) {
                 update: {
                     name,
                     content: content || "",
-                    username,
+                    username, // 👈 THÊM DÒNG NÀY
                 },
                 create: {
                     id,
                     name,
                     content: content || "",
-                    username,
+                    username, // 👈 THÊM DÒNG NÀY
                 },
             });
         }
-
         return NextResponse.json({
             success: true,
             document,
