@@ -16,14 +16,16 @@ model Document {
   username  String
   content   String
   createdAt DateTime    @default(now())
-  histories AIHistory[]
+  histories AiHistory[]
 }
 
-model AIHistory {
+model AiHistory {
   id         String   @id @default(cuid())
   question   String
   answer     String
   documentId String
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+
+  @@map("AIHistory")
 }

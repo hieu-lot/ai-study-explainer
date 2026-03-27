@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 interface RequestBody {
   question: string;
@@ -37,12 +38,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate mock answer
+    // Mock answer
     const answer = `This is a mock answer for: ${question}`;
 
-    // Save to database
+    // 🔥 FIX DUY NHẤT: đúng tên prisma model
     try {
-      await prisma.aIHistory.create({
+      await prisma.aiHistory.create({
         data: {
           question,
           answer,
@@ -57,10 +58,12 @@ export async function POST(request: NextRequest) {
       success: true,
       answer,
     });
-  } catch (err: any) {
+
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal error";
     console.error("API ERROR:", err);
     return NextResponse.json(
-      { success: false, error: err?.message || "Internal error" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

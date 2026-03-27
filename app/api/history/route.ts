@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 
 export async function GET() {
     try {
-        const history = await prisma.aIHistory.findMany({
+        const history = await prisma.aiHistory.findMany({
             take: 10,
             orderBy: {
                 createdAt: "desc",

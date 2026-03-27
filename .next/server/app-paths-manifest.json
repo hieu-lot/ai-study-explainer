@@ -1,7 +1,14 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js",
+  "/api/history/route": "app/api/history/route.js",
   "/page": "app/page.js",
-  "/api/documents/route": "app/api/documents/route.js",
   "/api/history/[documentId]/route": "app/api/history/[documentId]/route.js",
+  "/api/documents/route": "app/api/documents/route.js",
+  "/api/ai/route": "app/api/ai/route.js",
+  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
+  "/(app)/flashcards/page": "app/(app)/flashcards/page.js",
+  "/(app)/library/page": "app/(app)/library/page.js",
   "/(app)/doc/[id]/page": "app/(app)/doc/[id]/page.js",
-  "/(app)/dashboard/page": "app/(app)/dashboard/page.js"
+  "/(app)/settings/page": "app/(app)/settings/page.js"
 }

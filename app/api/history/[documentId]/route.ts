@@ -17,7 +17,7 @@ export async function GET(
             );
         }
 
-        const history = await prisma.aIHistory.findMany({
+        const history = await prisma.aiHistory.findMany({
             where: {
                 documentId,
             },

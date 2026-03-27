@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ success: false, error: "Document not found" }, { status: 404 });
             }
 
-            if (username && (doc as any).username !== username) {
+            if (username && doc.username !== username) {
                 return NextResponse.json({ success: false, error: "Document not found" }, { status: 404 });
             }
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         }
 
         try {
-            const documents = await (prisma as any).document.findMany({
+            const documents = await prisma.document.findMany({
                 where: { username },
                 orderBy: { createdAt: "desc" },
                 include: { _count: { select: { histories: true } } },
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
                 include: { _count: { select: { histories: true } } },
             });
 
-            const filtered = all.filter((d) => (d as any).username === username);
+            const filtered = all.filter((d) => d.username === username);
             return NextResponse.json({ success: true, documents: filtered });
         }
     } catch (error) {
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         let document;
 
         try {
-            document = await (prisma as any).document.upsert({
+            document = await prisma.document.upsert({
                 where: { id },
                 update: {
                     name,
