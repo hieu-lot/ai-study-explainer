@@ -18,9 +18,15 @@ from routers.flashcards import router as flashcards_router
 
 app = FastAPI(title="AI Study Explainer API", version="0.1.0")
 
+origins = [
+    "http://localhost:3000",
+    "https://*.vercel.app",
+    "https://ai-study-explainer.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+    allow_origins=["*"],  # for now allow all to avoid blocking
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
